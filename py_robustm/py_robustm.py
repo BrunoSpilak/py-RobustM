@@ -17,18 +17,26 @@ nlshrink = importr('nlshrink')
 
 
 def load_dataset1():
-    data = pd.read_csv("data/dataset1.csv", index_col=0)
-    data.index = pd.to_datetime(data.index)
+    data = pd.read_csv(
+        "data/dataset1.csv", index_col=0, parse_dates=True
+    )
+    data = data.interpolate(method="polynomial", order=2)
     data = data.astype(np.float32)
+
+    # There are NaNs at the beginning or end... drop them
+    data.dropna(inplace=True)
     return data, list(data.columns)
 
 
 def load_dataset2():
-    data = pd.read_csv('data/dataset2.csv', index_col=0)
-    data.index = pd.to_datetime(data.index)
-    data = data.interpolate(method='polynomial', order=2)
+    data = pd.read_csv(
+        "data/dataset2.csv", index_col=0, parse_dates=True
+    )
+    data = data.interpolate(method="polynomial", order=2)
     data = data.astype(np.float32)
     assets = list(data.columns)
+
+    assert not data.isna().any().any()
 
     return data, assets
 
